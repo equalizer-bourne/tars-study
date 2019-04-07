@@ -93,7 +93,7 @@ step by step安装流程: [https://github.com/TarsCloud/Tars/blob/master/Install
 
 最终我们采用第二种方案成功拉起框架核心服务，简单来说:
 
-1. 安装mysql, 本人使用的是5.2.6版本
+1. 安装mysql, 本人使用的是5.6.43版本
 2. 安装开发依赖，简单起见直接install开发全家桶即可
 ```
 yum -y groupinstall "Development tools"
@@ -116,7 +116,17 @@ yum -y groupinstall "Development tools"
 
 ### 开发环境搭建
 这里以C++语言为例一起看下怎么开发并发布上线我们的业务Server节点。
-目前不确定一键部署脚本是否安装了c++开发环境，如果没有的话，那手动clone TarsCpp模块代码，然后install一下，默认会在/usr/local/tars/cpp中安装好各种自动化脚本工具
+一键部署脚本仅安装了Tars各项核心服务(registry、node等)，没有安装c++开发环境，为了编写tars服务，我们需要自己把它安装到本地。
+过程相对简单一些，先把代码clone到本地，然后编译安装即可:
+```
+git clone https://github.com/TarsCloud/TarsCpp.git --recursive
+cd TarsCpp
+cmake .
+make
+make install
+```
+
+install结束之后c++开发环境就会被安装到/usr/local/tars/cpp目录中
 
 #### 服务命名规则
 使用Tars框架的服务，其的服务名称有三个部分：
