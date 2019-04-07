@@ -85,12 +85,54 @@ tars协议采用接口描述语言（Interface description language，缩写IDL�
 > 貌似客户端通过stringToProxy()方法调用来从Registry获得服务端接口的代理
 
 ## 框架安装&部署
+
+### 运行环境配置及框架部署
 step by step安装流程: [https://github.com/TarsCloud/Tars/blob/master/Install.zh.md](https://github.com/TarsCloud/Tars/blob/master/Install.zh.md)
 
 一键部署方式: [https://github.com/TarsCloud/Tars/tree/master/deploy](https://github.com/TarsCloud/Tars/tree/master/deploy)
 
-> 说实话在安装过程中遇到一些麻烦，网络的原因，单单clone源码的过程就很艰辛。最开始参考了那篇install说明文档，需要手动下载一大坨依赖，略显蛋疼，后来读到一键部署说明文档，在尝试过程中也遇到一些小问题，比如mysql账号权限不足等等。
+最终我们采用第二种方案成功拉起框架核心服务，简单来说:
 
+1. 安装mysql, 本人使用的是5.2.6版本
+2. 安装开发依赖，简单起见直接install开发全家桶即可
+```
+yum -y groupinstall "Development tools"
+```
+3. 把Tars的deploy模块代码[https://github.com/TarsCloud/Tars/tree/master/deploy](https://github.com/TarsCloud/Tars/tree/master/deploy) 拉到本地
+4. 修改comm.properties文件，把本机安装好的MySQL的root账号密码填进去
+5. 然后运行以下命令即可
+```
+	cd /data
+	git clone https://github.com/TarsCloud/Tars.git --recursive
+	cd /data/Tars/deploy
+	python ./deploy.py all
+```
 
+执行成功后可以访问 [http://localhost:3000](http://localhost:3000) ，此时应该能进入到Tars的console界面
+
+![](https://github.com/TarsCloud/Tars/raw/master/docs/images/tars_web_system_index.png)
+
+> 说实话在安装过程中遇到了一些麻烦，单单clone源码的过程就很艰辛，好几次尝试之后才成功。最开始参考了那篇install说明文档，需要手动下载一大坨依赖，略显蛋疼，后来读到一键部署说明文档，明显能减轻开发者的负担，但在尝试过程中也遇到一些小问题，比如mysql账号权限不足等等情况，可能是跟本机配置有关，我编译过程中有部分模块花费了巨长的时间，好像要将近两个小时，简直崩溃。
+
+### 开发环境搭建
+这里以C++语言为例一起看下怎么开发并发布上线我们的业务Server节点。
+目前不确定一键部署脚本是否安装了c++开发环境，如果没有的话，那手动clone TarsCpp模块代码，然后install一下，默认会在/usr/local/tars/cpp中安装好各种自动化脚本工具
+
+#### 服务命名规则
+使用Tars框架的服务，其的服务名称有三个部分：
+
+APP： 应用名，标识一组服务的一个小集合，在Tars系统中，应用名必须唯一。例如：TestApp；
+
+Server： 服务名，提供服务的进程名称，Server名字根据业务服务功能命名，一般命名为：XXServer，例如HelloServer；
+
+Servant：服务者，提供具体服务的接口或实例。例如:HelloImp；
+
+说明：
+
+一个Server可以包含多个Servant，系统会使用服务的App + Server + Servant，进行组合，来定义服务在系统中的路由名称，称为路由Obj，其名称在整个系统中必须是唯一的，以便在对外服务时，能唯一标识自身。
+
+因此在定义APP时，需要注意APP的唯一性。
+
+例如：TestApp.HelloServer.HelloObj。
 
 
